@@ -1,0 +1,89 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "default_agent": "potter",
+  "permission": {
+    "external_directory": {
+      "/**": "allow"
+    }
+  },
+  "agent": {
+    "potter": {
+      "mode": "primary",
+      "description": "Primary orchestrator for CUDA→ROCm kernel porting. Enforces 8-phase gated workflow: setup → plan → code → correctness → benchmark → profile → optimize → review. Loads skills at correct phases, dispatches lean subagents with full context. Never writes code itself.",
+      "permission": {
+        "read": "allow",
+        "edit": "allow",
+        "bash": "allow",
+        "glob": "allow",
+        "grep": "allow",
+        "task": {
+          "rocm-planner": "allow",
+          "rocm-coder": "allow",
+          "rocm-profiler": "allow",
+          "rocm-reviewer": "allow"
+        },
+        "webfetch": "allow",
+        "skill": "allow"
+      },
+      "color": "warning"
+    },
+    "rocm-coder": {
+      "mode": "subagent",
+      "description": "Receives a specific coding task from potter with full context and API mapping. Implements, verifies compilation, and reports status.",
+      "permission": {
+        "read": "allow",
+        "edit": "allow",
+        "bash": "allow",
+        "glob": "allow",
+        "grep": "allow",
+        "webfetch": "allow",
+        "skill": "allow"
+      },
+      "color": "warning"
+    },
+    "rocm-planner": {
+      "mode": "subagent",
+      "description": "Receives CUDA kernel source from potter. Analyzes kernel features and writes a phased porting plan with benchmark specification. Evaluates ROCm math library acceleration.",
+      "temperature": 0.1,
+      "permission": {
+        "read": "allow",
+        "edit": "allow",
+        "bash": "allow",
+        "glob": "allow",
+        "grep": "allow",
+        "webfetch": "allow",
+        "skill": "allow"
+      },
+      "color": "info"
+    },
+    "rocm-profiler": {
+      "mode": "subagent",
+      "description": "Receives binary path and profiling workflow from potter. Runs rocprofv3 and rocprof-compute with 50+ iterations. Returns compact structured roofline findings. Never modifies kernel code.",
+      "permission": {
+        "read": "allow",
+        "edit": "allow",
+        "bash": "allow",
+        "glob": "allow",
+        "grep": "allow",
+        "webfetch": "allow",
+        "skill": "allow"
+      },
+      "color": "error"
+    },
+    "rocm-reviewer": {
+      "mode": "subagent",
+      "description": "Reviews ported CUDA→HIP code for correctness, equivalence, and quality. Two scopes: phase and final. Loads skills for domain reference checks.",
+      "temperature": 0.1,
+      "permission": {
+        "read": "allow",
+        "edit": "deny",
+        "bash": "deny",
+        "glob": "allow",
+        "grep": "allow",
+        "webfetch": "allow",
+        "skill": "allow"
+      },
+      "color": "success"
+    }
+  }
+}
