@@ -53,9 +53,8 @@ Features:
 
 ## Setup
 
-1. Install [OpenCode](https://opencode.ai)
-2. `cd` into `rocm-potter/`
-3. Run `opencode` — agents and skills are auto-discovered from `.opencode/`
+1. `cd` into `rocm-potter/`
+2. Run `opencode` — agents and skills are auto-discovered from `.opencode/`
 
 For the web UI:
 ```bash
