@@ -1,14 +1,16 @@
 import { useState, useEffect } from "react";
-import type { OpencodeClient, Part } from "@opencode-ai/sdk";
+import type { Part } from "@opencode-ai/sdk";
 import { Loader2, RefreshCw, Check, ChevronRight, ChevronDown } from "lucide-react";
 import { parseAgentType, getAgentColor, getAgentLabel } from "../lib/parse-agent";
 import ToolCallRow from "./ToolCallRow";
+import { useOpencode } from "../hooks/useOpencode";
+import type { DemoPart } from "./ChatPanel";
 
 interface AgentBlockProps {
-  client: OpencodeClient;
   sessionId: string;
   title: string;
   status: { type: string } | undefined;
+  demoMessages?: Array<{ role: string; parts: DemoPart[] }>;
 }
 
 function stripSubagent(title: string): string {
@@ -24,7 +26,8 @@ function getToolTime(part: Part): { start: number; end: number } | null {
   return null;
 }
 
-export default function AgentBlock({ client, sessionId, title, status }: AgentBlockProps) {
+export default function AgentBlock({ sessionId, title, status, demoMessages }: AgentBlockProps) {
+  const { client } = useOpencode();
   const [expanded, setExpanded] = useState(false);
   const [parts, setParts] = useState<Part[]>([]);
   const [loading, setLoading] = useState(false);
@@ -35,7 +38,12 @@ export default function AgentBlock({ client, sessionId, title, status }: AgentBl
   const displayTitle = stripSubagent(title);
 
   useEffect(() => {
-    if (!expanded || loading) return;
+    if (!expanded) return;
+    if (demoMessages) {
+      setParts(demoMessages.flatMap((m) => m.parts) as unknown as Part[]);
+      return;
+    }
+    if (!client || loading) return;
     let cancelled = false;
     setLoading(true);
     client.session
@@ -52,7 +60,7 @@ export default function AgentBlock({ client, sessionId, title, status }: AgentBl
     return () => {
       cancelled = true;
     };
-  }, [expanded, client, sessionId]);
+  }, [expanded, client, sessionId, demoMessages]);
 
   const statusType = status?.type ?? "idle";
   const StatusIcon =

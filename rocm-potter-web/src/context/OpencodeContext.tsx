@@ -28,7 +28,7 @@ export function OpencodeProvider({ children }: { children: ReactNode }) {
   const [baseUrl, setBaseUrl] = useState("");
   const [activeSessionId, setActiveSessionId] = useState<string | null>(null);
   const [connected, setConnected] = useState(false);
-  const [demoMode, setDemoMode] = useState(false);
+  const [demoMode, setDemoMode] = useState(true);
 
   const connect = useCallback(async (url: string) => {
     try {

@@ -37,8 +37,5 @@ export function parseBenchmarkOutput(output: string): Partial<ParsedBenchmark> {
       : undefined;
   if (aiMatch !== undefined) result.aiMatch = aiMatch;
 
-  const findingMatch = output.match(/key[:\s]+finding[:\s]+(.+?)(?:\n|$)/i);
-  if (findingMatch) result.keyFinding = findingMatch[1].trim();
-
   return result as Partial<ParsedBenchmark>;
 }

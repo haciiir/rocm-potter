@@ -42,5 +42,4 @@ export interface ParsedBenchmark {
   mfmaUtil: number;
   l2HitRate: number;
   bottleneck: string;
-  keyFinding: string;
 }

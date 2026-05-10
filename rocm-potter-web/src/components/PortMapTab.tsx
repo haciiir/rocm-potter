@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useOpencode } from "../hooks/useOpencode";
+import { DEMO_DIFFS } from "../lib/demo-data";
 
 interface FileDiff {
   file: string;
@@ -13,17 +14,21 @@ interface Props {
 }
 
 export default function PortMapTab({ sessionId }: Props) {
-  const { client } = useOpencode();
+  const { client, demoMode } = useOpencode();
   const [diffs, setDiffs] = useState<FileDiff[]>([]);
 
   useEffect(() => {
+    if (demoMode) {
+      setDiffs(DEMO_DIFFS as FileDiff[]);
+      return;
+    }
     if (!client || !sessionId) return;
     client.session.diff({ path: { id: sessionId } }).then((res) => {
       setDiffs((res.data ?? []) as FileDiff[]);
     }).catch(() => setDiffs([]));
-  }, [client, sessionId]);
+  }, [client, sessionId, demoMode]);
 
-  if (!sessionId) return <div className="p-4 text-xs text-text-muted">No session selected</div>;
+  if (!sessionId && !demoMode) return <div className="p-4 text-xs text-text-muted">No session selected</div>;
   if (diffs.length === 0) return <div className="p-4 text-xs text-text-muted">No file changes recorded</div>;
 
   return (

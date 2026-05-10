@@ -22,7 +22,6 @@ const ROWS: { key: keyof ParsedBenchmark; label: string; fmt: (v: unknown) => st
   { key: "mfmaUtil", label: "MFMA Util", fmt: (v) => `${v}%` },
   { key: "l2HitRate", label: "L2 Hit Rate", fmt: (v) => `${v}%` },
   { key: "bottleneck", label: "Bottleneck", fmt: (v) => String(v) },
-  { key: "keyFinding", label: "Key Finding", fmt: (v) => String(v) },
 ];
 
 export default function MetricTable({ metrics }: Props) {
